@@ -1,5 +1,7 @@
 # Test Automation MCP Server
 
+[![CI](https://github.com/hmodali2611/test-automation-mcp-server/actions/workflows/ci.yml/badge.svg)](https://github.com/hmodali2611/test-automation-mcp-server/actions/workflows/ci.yml)
+
 A [Model Context Protocol](https://modelcontextprotocol.io) server that gives AI assistants (Claude, GitHub Copilot, Cursor) safe, structured access to a test automation stack. From a chat, an assistant can run a suite, read why tests failed, pull test data, and file a Jira bug with the evidence.
 
 ```text
