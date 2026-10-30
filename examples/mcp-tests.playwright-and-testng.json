@@ -1,0 +1,24 @@
+{
+  "suites": [
+    {
+      "name": "web-e2e",
+      "description": "Playwright web suite",
+      "command": "npx playwright test --reporter=junit",
+      "cwd": "../my-web-app",
+      "junitReport": "test-results/junit.xml",
+      "grepFlag": "--grep",
+      "timeoutSeconds": 900
+    },
+    {
+      "name": "mobile-ios",
+      "description": "Appium + TestNG iOS suite (Maven)",
+      "command": "mvn -q test -Dplatform=ios",
+      "cwd": "../mobile-tests",
+      "junitReport": "target/surefire-reports/TEST-TestSuite.xml",
+      "grepFlag": "-Dtest=",
+      "timeoutSeconds": 1800
+    }
+  ],
+  "testDataFile": "data/test-data.json",
+  "jira": { "projectKey": "MOB", "issueType": "Bug" }
+}

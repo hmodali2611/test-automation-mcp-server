@@ -1,0 +1,16 @@
+{
+  "suites": [
+    {
+      "name": "sample-e2e",
+      "description": "Bundled demo suite (no setup needed)",
+      "command": "node run.mjs",
+      "cwd": "examples/sample-suite",
+      "junitReport": "results/junit.xml",
+      "grepFlag": "--grep",
+      "timeoutSeconds": 60
+    }
+  ],
+  "testDataFile": "data/test-data.json",
+  "jira": { "projectKey": "QA", "issueType": "Bug" },
+  "reportsDir": "reports"
+}

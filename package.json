@@ -1,0 +1,27 @@
+{
+  "name": "test-automation-mcp-server",
+  "version": "1.0.0",
+  "description": "An MCP server that lets AI assistants run test suites, read failures, look up test data and file Jira bugs.",
+  "license": "MIT",
+  "author": "Harika Modali",
+  "type": "module",
+  "bin": { "test-automation-mcp": "dist/index.js" },
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.0",
+    "fast-xml-parser": "^4.5.0",
+    "zod": "^3.25.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "tsx": "^4.19.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}

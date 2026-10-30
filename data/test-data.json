@@ -1,0 +1,15 @@
+{
+  "users": [
+    { "email": "demo@shoplite.test", "password": "secret123", "role": "shopper", "region": "US" },
+    { "email": "admin@shoplite.test", "password": "admin123", "role": "admin", "region": "US" },
+    { "email": "eu.shopper@shoplite.test", "password": "secret123", "role": "shopper", "region": "EU" }
+  ],
+  "products": [
+    { "sku": "EARBUDS-01", "name": "Wireless Earbuds", "price": "49.00", "inStock": "true" },
+    { "sku": "CASE-02", "name": "Phone Case", "price": "19.00", "inStock": "false" }
+  ],
+  "promoCodes": [
+    { "code": "SAVE20", "discountPercent": "20", "status": "active" },
+    { "code": "SPRING10", "discountPercent": "10", "status": "expired" }
+  ]
+}

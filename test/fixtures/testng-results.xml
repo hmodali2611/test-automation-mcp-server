@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="MobileRegression" tests="3" failures="1" errors="1" skipped="0" time="12.5">
+  <testcase name="testLogin" classname="com.shop.tests.LoginTest" time="3.1"/>
+  <testcase name="testAddToCart" classname="com.shop.tests.CartTest" time="4.2">
+    <failure message="expected [2] but found [1]" type="java.lang.AssertionError">java.lang.AssertionError: expected [2] but found [1]
+	at com.shop.tests.CartTest.testAddToCart(CartTest.java:57)</failure>
+  </testcase>
+  <testcase name="testCheckout" classname="com.shop.tests.CheckoutTest" time="5.2">
+    <error message="NoSuchElementException: id=checkout_button" type="org.openqa.selenium.NoSuchElementException">org.openqa.selenium.NoSuchElementException: An element could not be located</error>
+  </testcase>
+</testsuite>

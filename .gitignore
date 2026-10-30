@@ -1,0 +1,5 @@
+node_modules/
+dist/
+reports/
+examples/sample-suite/results/
+.env
