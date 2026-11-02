@@ -1,0 +1,1 @@
+{"reportsDir":"reports","suites":[{"command":"node scripts/real-appium-apidemos.mjs","cwd":".","description":"Real Appium ApiDemos suite on Android emulator","grepFlag":"--grep","junitReport":"test-results/junit.xml","name":"real-appium-apidemos","timeoutSeconds":600}]}
