@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/hmodali2611/test-automation-mcp-server/actions/workflows/ci.yml/badge.svg)](https://github.com/hmodali2611/test-automation-mcp-server/actions/workflows/ci.yml)
 
-A [Model Context Protocol](https://modelcontextprotocol.io) server that gives AI assistants (Claude, GitHub Copilot, Cursor) safe, structured access to a test automation stack. From a chat, an assistant can run a suite, read why tests failed, pull test data, and file a Jira bug with the evidence.
+A [Model Context Protocol](https://modelcontextprotocol.io) server that gives AI assistants (Claude, GitHub Copilot, Cursor) safe, structured access to a test automation stack. From a chat, an assistant can run a suite, read why tests failed, pull test data, write a shareable investigation report, and file a Jira bug with the evidence.
 
 ```text
 "Run the checkout suite and file bugs for anything that's a real defect."
@@ -23,9 +23,17 @@ A [Model Context Protocol](https://modelcontextprotocol.io) server that gives AI
 | `get_test_results` | Summarizes the latest JUnit report without re-running |
 | `get_failure_details` | Error message, stack trace and captured output for a failing test |
 | `query_test_data` | Looks up accounts, products, promo codes, etc. from a JSON fixture file |
+| `write_investigation_report` | Writes a shareable markdown report for one triaged test, with its classification, evidence, and action |
 | `create_jira_bug` | Files a Jira Cloud bug; writes a draft file instead when no credentials are set |
 
-Prompt: `triage_failures` walks the assistant through run → inspect → re-run to rule out flakiness → classify (product defect, test issue, environment) → file bugs only for real defects.
+Prompt: `triage_failures` walks the assistant through run → inspect → re-run to rule out flakiness → classify (product defect, test issue, environment) → write an investigation report for each failure → file bugs only for real defects.
+
+## Scope and limits
+
+- This server runs suites you configure in the config file and reads the JUnit XML those suites produce. It does not include a built-in Playwright or Appium driver. The examples show a Playwright web suite and an Appium plus TestNG iOS suite because both produce JUnit XML.
+- Debugging here means inspecting failure details: error message, stack trace, and captured output for a failing test. It does not provide interactive debugging, breakpoints, or live device control.
+- `create_jira_bug` files a live Jira issue only when Jira credentials are set. Without them, it writes a draft file to `reports/jira-drafts/` and reports that no issue was created.
+- An investigation is repeatable through the `triage_failures` prompt, and it is logged and shareable through `write_investigation_report`, which writes a markdown report to `reports/investigations/`, plus the JUnit report and the Jira issue or draft.
 
 ## Works with any framework that writes JUnit XML
 
@@ -51,7 +59,7 @@ Playwright, TestNG, Maven Surefire, JUnit 5, pytest and most CI tools all produc
 
 ```bash
 npm install
-npm test          # 10 tests: JUnit parsing + every tool end to end over an in-memory MCP transport
+npm test          # 11 tests: JUnit parsing + every tool end to end over an in-memory MCP transport
 npm run build
 ```
 

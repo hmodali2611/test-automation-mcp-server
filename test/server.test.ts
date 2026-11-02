@@ -28,6 +28,7 @@ describe('MCP server (end to end over an in-memory transport)', () => {
       'list_test_suites',
       'query_test_data',
       'run_tests',
+      'write_investigation_report',
     ]);
     const { prompts } = await client.listPrompts();
     expect(prompts.map((p) => p.name)).toEqual(['triage_failures']);
@@ -75,6 +76,27 @@ describe('MCP server (end to end over an in-memory transport)', () => {
     const path = out.split('Draft saved to ')[1].trim();
     expect(existsSync(path)).toBe(true);
     expect(JSON.parse(readFileSync(path, 'utf8')).fields.project.key).toBe('QA');
+  });
+
+  it('writes a shareable investigation report for a classified failure', async () => {
+    const res = await client.callTool({
+      name: 'write_investigation_report',
+      arguments: {
+        suite: 'sample-e2e',
+        testName: 'checkout applies promo code',
+        classification: 'TEST_ISSUE',
+        evidence: 'API says PROMO_EXPIRED; SPRING10 is marked expired in test data.',
+        action: 'Fix the test data, do not file a product bug.',
+      },
+    });
+    const out = text(res);
+    expect(out).toContain('Investigation report saved to');
+    const path = out.split('Investigation report saved to ')[1].trim();
+    expect(existsSync(path)).toBe(true);
+    const content = readFileSync(path, 'utf8');
+    expect(content).toContain('Classification: TEST_ISSUE');
+    expect(content).toContain('PROMO_EXPIRED');
+    expect(content).toContain('Fix the test data');
   });
 
   it('returns a tool error (not a crash) for an unknown suite', async () => {

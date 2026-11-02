@@ -4,6 +4,7 @@ import { type Config, findSuite, resolveFrom } from './config.js';
 import { readJUnitFile, summarize } from './junit.js';
 import { runCommand, shellQuote } from './runner.js';
 import { fileBug } from './jira.js';
+import { writeInvestigationReport } from './investigation.js';
 import { listEntities, queryTestData } from './testData.js';
 
 const ok = (text: string) => ({ content: [{ type: 'text' as const, text }] });
@@ -136,6 +137,30 @@ export function createServer(config: Config): McpServer {
   );
 
   server.registerTool(
+    'write_investigation_report',
+    {
+      title: 'Write an investigation report',
+      description:
+        'Write a shareable markdown investigation report for one triaged test, with its classification, evidence, and action. ' +
+        'Use this after classifying a failure, so the investigation is logged to a file instead of living only in chat.',
+      inputSchema: {
+        suite: z.string().describe('Suite name from list_test_suites'),
+        testName: z.string().describe('Full or partial test name'),
+        classification: z.enum(['PRODUCT_DEFECT', 'TEST_ISSUE', 'ENVIRONMENT']),
+        evidence: z.string().min(1).describe('Failure details, logs, or test data that support the classification'),
+        action: z.string().min(1).describe('What happens next: file a bug, fix the test, or fix the environment'),
+      },
+    },
+    safe(async (input: { suite: string; testName: string; classification: 'PRODUCT_DEFECT' | 'TEST_ISSUE' | 'ENVIRONMENT'; evidence: string; action: string }) => {
+      findSuite(config, input.suite);
+      const result = writeInvestigationReport(input, {
+        reportsDir: resolveFrom(config, config.reportsDir),
+      });
+      return ok(`Investigation report saved to ${result.reportPath}`);
+    }),
+  );
+
+  server.registerTool(
     'create_jira_bug',
     {
       title: 'File a Jira bug',
@@ -180,7 +205,9 @@ export function createServer(config: Config): McpServer {
             text:
               `Run the "${suite}" suite with run_tests. For each failure, call get_failure_details and classify it as ` +
               `PRODUCT_DEFECT, TEST_ISSUE (bad locator, bad data, timing) or ENVIRONMENT. ` +
-              `Re-run once with a filter to rule out flakiness. Only call create_jira_bug for PRODUCT_DEFECT, with ` +
+              `Re-run once with a filter to rule out flakiness. Call write_investigation_report for each failure, ` +
+              `with its classification, evidence, and action, so the investigation is logged to a file. ` +
+              `Only call create_jira_bug for PRODUCT_DEFECT, with ` +
               `steps to reproduce, expected and actual results. Finish with a table: test, classification, evidence, action.`,
           },
         },
