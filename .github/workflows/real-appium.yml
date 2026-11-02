@@ -1,0 +1,52 @@
+name: Real Appium emulator
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  apidemos:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Install Appium 2 and the UiAutomator2 driver
+        run: |
+          npm install -g appium
+          appium driver install uiautomator2
+      - run: npm install
+      - run: npm run build
+      - name: Download Appium's public ApiDemos app
+        run: |
+          mkdir -p apps
+          cd apps && npm pack android-apidemos --silent && tar xzf android-apidemos-*.tgz package/apks/ApiDemos-debug.apk
+          mv package/apks/ApiDemos-debug.apk . && rm -rf package android-apidemos-*.tgz
+          ls -la
+      - name: Start Appium server
+        run: |
+          mkdir -p out/real-appium
+          nohup appium --address 127.0.0.1 --port 4723 --log out/real-appium/appium.log > /dev/null 2>&1 &
+      - name: Run real Appium suite through the MCP server on the emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 30
+          arch: x86_64
+          target: default
+          disable-animations: true
+          emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
+          script: |
+            adb install apps/ApiDemos-debug.apk
+            APPIUM_SERVER=http://127.0.0.1:4723 node scripts/run-mcp-on-real-appium.mjs > out/real-appium/mcp-output.txt 2>&1; rc=$?; cat out/real-appium/mcp-output.txt; cp -r test-results out/real-appium/ 2>/dev/null || true; cp -r reports out/real-appium/ 2>/dev/null || true; exit $rc
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: real-appium-reports
+          path: out/real-appium/
