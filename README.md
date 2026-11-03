@@ -1,6 +1,7 @@
 # Test Automation MCP Server
 
 [![CI](https://github.com/hmodali2611/test-automation-mcp-server/actions/workflows/ci.yml/badge.svg)](https://github.com/hmodali2611/test-automation-mcp-server/actions/workflows/ci.yml)
+[![M8ven Score](https://m8ven.ai/badge/mcp/hmodali2611-test-automation-mcp-server-1xlw3k?v=744b9d17f6cc7b2d745278503d8f9d86)](https://m8ven.ai/mcp/hmodali2611-test-automation-mcp-server-1xlw3k?s=readme)
 
 ## What it is
 
