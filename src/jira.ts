@@ -56,6 +56,12 @@ export async function fileBug(
     return { mode: 'draft', draftPath, payload };
   }
 
+  // The API token is sent as Basic auth, so it must never travel over plain http.
+  // Reject a non-https base URL instead of silently posting credentials insecurely.
+  if (!JIRA_BASE_URL.startsWith('https://')) {
+    throw new Error('JIRA_BASE_URL must start with https:// so the Jira API token is never sent over plain http');
+  }
+
   const res = await fetch(`${JIRA_BASE_URL.replace(/\/$/, '')}/rest/api/3/issue`, {
     method: 'POST',
     headers: {

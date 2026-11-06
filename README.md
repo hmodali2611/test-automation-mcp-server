@@ -74,7 +74,7 @@ An environment that can run `npm install`, `npm test` and `npm run build`, as in
 
 ```bash
 npm install
-npm test          # 11 tests: JUnit parsing + every tool end to end over an in-memory MCP transport
+npm test          # 14 tests: JUnit parsing + every tool end to end over an in-memory MCP transport, plus Jira https guard
 npm run build
 ```
 
@@ -123,7 +123,7 @@ Then use the tools listed above, or the `triage_failures` prompt, to run, inspec
 ## Testing
 
 ```bash
-npm test          # 11 tests: JUnit parsing + every tool end to end over an in-memory MCP transport
+npm test          # 14 tests: JUnit parsing + every tool end to end over an in-memory MCP transport, plus Jira https guard
 ```
 
 Verified in CI with a real Android emulator (2026-11-01, GitHub Actions run 41373946277, 1m 57s): a real emulator booted, ApiDemos installed, and `run_tests` ran 2 tests in 7.3s with 1 passed and 1 failed. The failure was a real UiAutomator2 NoSuchElement error for `testMissingElement`, and an investigation report was saved. The passing test is identified only by elimination (2 tests total, only `testMissingElement` failed), not by a named pass line. Jira filing remains draft only without credentials, and Claude or Copilot use has not been tested in a live client session.

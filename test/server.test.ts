@@ -32,6 +32,15 @@ describe('MCP server (end to end over an in-memory transport)', () => {
     ]);
     const { prompts } = await client.listPrompts();
     expect(prompts.map((p) => p.name)).toEqual(['triage_failures']);
+
+    // 7 tools: 4 read-only, 3 state-changing (destructiveHint).
+    const byName = Object.fromEntries(tools.map((t) => [t.name, t]));
+    for (const name of ['list_test_suites', 'get_test_results', 'get_failure_details', 'query_test_data']) {
+      expect((byName[name] as any).annotations).toEqual({ readOnlyHint: true });
+    }
+    for (const name of ['run_tests', 'write_investigation_report', 'create_jira_bug']) {
+      expect((byName[name] as any).annotations).toEqual({ destructiveHint: true });
+    }
   });
 
   it('runs a suite and reports failures', async () => {

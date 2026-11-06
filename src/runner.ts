@@ -7,7 +7,17 @@ export interface CommandResult {
   durationMs: number;
 }
 
-/** Run a shell command, keep the last ~4 KB of output, and kill it if it runs too long. */
+/**
+ * Trust boundary for shell execution: `command` must come only from the
+ * operator-owned config file (the suite commands in config), never from model
+ * output. The only model-supplied part is the test-name filter, which callers
+ * pass shell-quoted via shellQuote so it stays one argument and cannot inject
+ * shell commands. spawn keeps shell:true because suite commands are shell
+ * strings from operator-owned config; switching to shell:false is a redesign
+ * of how suites are configured, not a one-line hardening.
+ *
+ * Run a shell command, keep the last ~4 KB of output, and kill it if it runs too long.
+ */
 export function runCommand(command: string, cwd: string, timeoutSeconds: number): Promise<CommandResult> {
   return new Promise((resolve) => {
     const started = Date.now();

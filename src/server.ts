@@ -52,6 +52,7 @@ export function createServer(config: Config): McpServer {
         suite: z.string().describe('Suite name from list_test_suites'),
         filter: z.string().optional().describe('Optional test name filter, passed with the suite grep flag'),
       },
+      annotations: { destructiveHint: true },
     },
     safe(async ({ suite, filter }: { suite: string; filter?: string }) => {
       const s = findSuite(config, suite);
@@ -150,6 +151,7 @@ export function createServer(config: Config): McpServer {
         evidence: z.string().min(1).describe('Failure details, logs, or test data that support the classification'),
         action: z.string().min(1).describe('What happens next: file a bug, fix the test, or fix the environment'),
       },
+      annotations: { destructiveHint: true },
     },
     safe(async (input: { suite: string; testName: string; classification: 'PRODUCT_DEFECT' | 'TEST_ISSUE' | 'ENVIRONMENT'; evidence: string; action: string }) => {
       findSuite(config, input.suite);
@@ -173,6 +175,7 @@ export function createServer(config: Config): McpServer {
         priority: z.enum(['Highest', 'High', 'Medium', 'Low', 'Lowest']).optional(),
         labels: z.array(z.string()).optional(),
       },
+      annotations: { destructiveHint: true },
     },
     safe(async (input: { summary: string; description: string; priority?: 'Highest' | 'High' | 'Medium' | 'Low' | 'Lowest'; labels?: string[] }) => {
       if (!config.jira) throw new Error('No jira section in config');
